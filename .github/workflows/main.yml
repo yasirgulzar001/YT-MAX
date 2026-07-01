@@ -2,13 +2,14 @@ name: Run Telegram Bot
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:   # manual trigger from the Actions tab
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   start-bot:
     runs-on: ubuntu-latest
-    timeout-minutes: 360   # 6 hours (free GitHub runner max)
+    timeout-minutes: 360
 
     steps:
       - name: Checkout code
@@ -17,19 +18,30 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install system dependencies
+      - name: Install FFmpeg
         run: |
-          sudo apt update
-          sudo apt install -y ffmpeg
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
 
       - name: Install Python packages
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run bot
+      - name: Create cookies.txt
+        run: |
+          cat > cookies.txt << 'EOF'
+          ${{ secrets.YT_COOKIES }}
+          EOF
+
+      - name: Verify cookies file
+        run: |
+          ls -lh cookies.txt
+          head -n 3 cookies.txt
+
+      - name: Run Bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           ADMIN_IDS: ${{ secrets.ADMIN_IDS }}
