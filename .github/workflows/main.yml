@@ -1,0 +1,36 @@
+name: Run Telegram Bot
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # manual trigger from the Actions tab
+
+jobs:
+  start-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360   # 6 hours (free GitHub runner max)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+
+      - name: Install Python packages
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ADMIN_IDS: ${{ secrets.ADMIN_IDS }}
+        run: python bot.py
