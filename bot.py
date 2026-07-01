@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import io
+import aiosqlite
 import itertools
 import logging
 import math
