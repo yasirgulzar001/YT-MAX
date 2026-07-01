@@ -1,0 +1,7 @@
+python-telegram-bot>=20.7
+yt-dlp
+aiohttp
+faster-whisper
+edge-tts
+aiosqlite
+torch>=2.0
